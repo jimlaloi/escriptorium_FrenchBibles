@@ -1,14 +1,18 @@
 version: "3.9"
 
 ### to customize the homepage, uncomment this
-#x-app:
-#  volumes:
-#    - $PWD/app/homepage
+x-app:
+  volumes:
+    - $PWD/app/homepage
 
 services:
 
     web: &web
       restart: always
+      # environment:
+      #   - CUSTOM_HOME=True
+      # volumes:
+      #   - $PWD/app/homepage
       # deploy:
       #   mode: replicated
       #   replicas: 1
@@ -153,12 +157,12 @@ services:
       #         - capabilities:
       #           - gpu
 
-      shm_size: '3gb'
-      runtime: nvidia
-      environment:
-         - KRAKEN_TRAINING_DEVICE=cuda:0
-         - NVIDIA_VISIBLE_DEVICES=all
-         - NVIDIA_DRIVER_CAPABILITIES=all
+      # shm_size: '3gb'
+      # runtime: nvidia
+      # environment:
+      #   - KRAKEN_TRAINING_DEVICE=cuda:0
+      #   - NVIDIA_VISIBLE_DEVICES=all
+      #   - NVIDIA_DRIVER_CAPABILITIES=all
 
     # add more workers for every physical gpu
     # celery-gpu2:
@@ -181,40 +185,40 @@ services:
     # celerybeat:
       # restart: always
 
-    prometheus:
-      image: prom/prometheus:v2.1.0
-      volumes:
-        - ./prometheus/:/etc/prometheus/
-        - prometheus_data:/prometheus
-      command:
-        - '--config.file=/etc/prometheus/prometheus.yml'
-        - '--storage.tsdb.path=/prometheus'
-        - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-        - '--web.console.templates=/usr/share/prometheus/consoles'
-      ports:
-        - 9090:9090
+  # prometheus:
+  #   image: prom/prometheus:v2.1.0
+  #   volumes:
+  #     - ./prometheus/:/etc/prometheus/
+  #     - prometheus_data:/prometheus
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #     - '--storage.tsdb.path=/prometheus'
+  #     - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+  #     - '--web.console.templates=/usr/share/prometheus/consoles'
+  #   ports:
+  #     - 9090:9090
   #  links:
   #    - alertmanager:alertmanager
 
-    alertmanager:
-      image: prom/alertmanager:v0.18.0
-      deploy:
-        replicas: 1
-      volumes:
-        - ./prometheus/alertmanager.yml:/etc/alertmanager/alertmanager.yml
-        - ./prometheus/email.tmpl:/etc/alertmanager/email.tmpl
-      command:
-        - '--config.file=/etc/alertmanager/alertmanager.yml'
-        - '--storage.path=/alertmanager'
-        - '--log.level=debug'
+  # alertmanager:
+  #   image: prom/alertmanager:v0.18.0
+  #   deploy:
+  #     replicas: 1
+  #   volumes:
+  #     - ./prometheus/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+  #     - ./prometheus/email.tmpl:/etc/alertmanager/email.tmpl
+  #   command:
+  #     - '--config.file=/etc/alertmanager/alertmanager.yml'
+  #     - '--storage.path=/alertmanager'
+  #     - '--log.level=debug'
 
-    container-exporter:
-      image: prom/container-exporter
-      volumes:
-        - /sys/fs/cgroup:/cgroup
-        - /var/run/docker.sock:/var/run/docker.sock
-      ports:
-        - 9104:9104
+  # container-exporter:
+  #   image: prom/container-exporter
+  #   volumes:
+  #     - /sys/fs/cgroup:/cgroup
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   ports:
+  #     - 9104:9104
 
 #volumes:
 #   static:
